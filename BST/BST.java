@@ -1,8 +1,9 @@
-public class BST<E extends Comparable<E>>{
-    private class Node{
-        E e;
-        Node left;
-        Node right;
+public class BST<E>
+{
+    public class Node(){
+        private E e;
+        private Node left;
+        private Node right;
 
         public Node(E e){
             this.e = e;
@@ -11,52 +12,21 @@ public class BST<E extends Comparable<E>>{
         }
     }
 
-    private Node root;
     private int Size;
+    private Node root;
 
     public BST(){
-        root = null;
         Size = 0;
-    }
-
-    public int getSize(){
-        return Size;
+        root = null;
     }
 
     public Boolean isEmpty(){
         return Size==0;
     }
 
-/* 写法1
-    public void add(E e){
-        if(root == null){
-            root = new Node(e);
-            Size++;
-        }else{
-            add(root,e);
-        }
+    public int getSize(){
+        return Size;
     }
-
-    private void add(Node node,E e){
-        if(e.equals(node.e)){
-            return;
-        }else if(e.compareTo(node.e)<0 && node.left == null){
-            node.left = new Node(e);
-            Size++;
-            return;
-        }else if(e.compareTo(node.e)>0 && node.right == null){
-            node.right = new Node(e);
-            Size++;
-            return;
-        }
-        
-        if(e.compareTo(node.e)<0){
-            add(node.left,e);
-        }else{
-            add(node.right,e);
-        }
-    }
-*/
 
     public void add(E e){
         root = add(root,e);
@@ -67,11 +37,28 @@ public class BST<E extends Comparable<E>>{
             Size++;
             return new Node(e);
         }
+
         if(e.compareTo(node.e)<0){
-            add(node.left,e);
+            node.left = add(node.left,e);
         }else if(e.compareTo(node.e)>0){
-            add(node.right,e);
+            node.right = add(node.right,e);
         }
-        return node;
+    }
+
+    public Boolean search(E e){
+        return search(e,node);
+    }
+
+    private Boolean search(E e,Node node){
+        if(node == null){
+            return false;
+        }
+        if(e.compareTo(node.e)=0){
+            return true;
+        }else if(e.compareTo(node.e)<0){
+            node.left = search(e,node.left);
+        }else{
+            node.right = search(e,node.right);
+        }
     }
 }
