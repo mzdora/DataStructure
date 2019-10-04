@@ -61,4 +61,23 @@ public class BST<E>
             node.right = search(e,node.right);
         }
     }
+
+    //前序遍历 最自然最常用的遍历方式
+    public void pretraverse(){
+        pretraverse(root);
+    }
+
+    private void pretraverse(Node node){
+        if(node == null)
+            return;
+        System.out.println(node.e);
+        pretraverse(node.left);
+        pretraverse(node.right);
+    }
+
+    //中序遍历，从左->右遍历。Node放中间。
+    //是二分搜索树里数字从小到大排列。
+    //二分搜索树也叫排序树
+
+    //后续遍历，为二分搜索树释放内存
 }
