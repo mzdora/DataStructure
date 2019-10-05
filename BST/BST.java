@@ -2,9 +2,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
 
-public class BST<E>
+public class BST<E extends Comparable<E>>
 {
-    public class Node(){
+    public class Node{
         private E e;
         private Node left;
         private Node right;
@@ -47,26 +47,26 @@ public class BST<E>
         }else if(e.compareTo(node.e)>0){
             node.right = add(node.right,e);
         }
+        return node;
     }
 
     public Boolean search(E e){
-        return search(e,node);
+        return search(e,root);
     }
 
     private Boolean search(E e,Node node){
         if(node == null){
             return false;
         }
-        if(e.compareTo(node.e)=0){
+        if(e.compareTo(node.e)==0){
             return true;
         }else if(e.compareTo(node.e)<0){
-            node.left = search(e,node.left);
+            return search(e,node.left);
         }else{
-            node.right = search(e,node.right);
+            return search(e,node.right);
         }
     }
 
-    //前序遍历 最自然最常用的遍历方式
     public void pretraverse(){
         pretraverse(root);
     }
@@ -79,7 +79,6 @@ public class BST<E>
         pretraverse(node.right);
     }
 
-    //前序遍历 深度优先遍历非递归写法
     public void deepthtraverse(){
         Stack<Node> stack = new Stack<>();
         stack.push(root);
@@ -95,9 +94,6 @@ public class BST<E>
         }
     }
 
-    //中序遍历，从左->右遍历。Node放中间。
-    //中序遍历是二分搜索树里数字从小到大排列。
-    //二分搜索树也叫排序树
     public void midtraverse(){
         midtraverse(root);
     }
@@ -112,7 +108,6 @@ public class BST<E>
         midtraverse(node.right);
     }
 
-    //后续遍历，为二分搜索树释放内存
     public void posttraverse(){
         posttraverse(root);
     }
@@ -127,24 +122,21 @@ public class BST<E>
         System.out.println(node.e);
     }
 
-    //广度优先遍历，只能用非递归实现
     public void weightraverse(){
-        //Queue只是一个接口，需要用LinkedList来Implement.
         Queue<Node> q = new LinkedList<>();
         q.add(root);
         while(!q.isEmpty()){
             Node node = q.remove();
             System.out.println(node.e);
             if(node.left != null)
-                q.add(node.right);
-            if(node.right != null)
                 q.add(node.left);
+            if(node.right != null)
+                q.add(node.right);
         }
     }
 
-    //找到树中的最小值
     public E getMin(){
-        if(size == 0){
+        if(Size == 0){
             throw new IllegalArgumentException("BST is empty");
         }
         E res = getMin(root).e;
@@ -155,15 +147,14 @@ public class BST<E>
         if(node.left == null){
             return node;
         }
-        getMin(node.left);
+        return getMin(node.left);
     }
 
-    //找到树中的最大值
     public E getMax(){
-        if(size == 0){
+        if(Size == 0){
             throw new IllegalArgumentException("BST is empty");
         }
-        E res = getMin(root).e;
+        E res = getMax(root).e;
         return res;
     }
 
@@ -171,13 +162,13 @@ public class BST<E>
         if(node.right == null){
             return node;
         }
-        getMin(node.right);
+        return getMax(node.right);
     }
 
-    //删除树中的最小值
     public E removemin(){
-        removemin(root);
-        return getMin();
+        E res = getMin();
+        root = removemin(root);
+        return res;
     }
 
     private Node removemin(Node node){
@@ -187,14 +178,14 @@ public class BST<E>
             Size--;
             return res;
         }
-
-        removemin(node.left);
+        node.left = removemin(node.left);
+        return node;
     }
 
-    //删除树中的最大值
     public E removemax(){
-        removemax(root);
-        return getMax();
+        E res = getMax();
+        root = removemax(root);
+        return res;
     }
 
     private Node removemax(Node node){
@@ -205,6 +196,68 @@ public class BST<E>
             return res;
         }
 
-        removemin(node.right);
+        node.right = removemax(node.right);
+        return node;
+    }
+
+    public void remove(E e){
+        root = remove(e,root);
+    }
+
+    private Node remove(E e,Node node){
+        if(node == null){
+            return null;
+        }
+        if(e.compareTo(node.e)<0){
+            node.left = remove(e,node.left);
+            return node;
+        }else if(e.compareTo(node.e)>0){
+            node.right = remove(e, node.right);
+            return node;
+        }else{
+            if(node.left == null){
+                Node res = node.right;
+                node.right = null;
+                Size--;
+                return res;
+            }else if(node.right == null){
+                Node res = node.left;
+                node.left = null;
+                Size--;
+                return res;
+            }else{
+                Node res = getMin(node.right);
+                res.right = removemin(node.right);
+                res.left = node.left;
+                node.right = node.left = null;
+                return res;
+            }
+        }
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+        generateBSTString(root, 0, res);
+        return res.toString();
+    }
+
+    private void generateBSTString(Node node, int depth, StringBuilder res){
+
+        if(node == null){
+            res.append(generateDepthString(depth) + "null\n");
+            return;
+        }
+
+        res.append(generateDepthString(depth) + node.e +"\n");
+        generateBSTString(node.left, depth + 1, res);
+        generateBSTString(node.right, depth + 1, res);
+    }
+
+    private String generateDepthString(int depth){
+        StringBuilder res = new StringBuilder();
+        for(int i = 0 ; i < depth ; i ++)
+            res.append("--");
+        return res.toString();
     }
 }
