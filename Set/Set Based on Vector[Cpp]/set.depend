@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1582821244 source:c:\users\mzdor\desktop\set\main.cpp
+	<iostream>
+	"set.h"
+
+1582821313 c:\users\mzdor\desktop\set\set.h
+	<vector>
+	<iostream>
+	<stdio.h>
+
+1582820927 source:c:\users\mzdor\desktop\set\set.cpp
+	"set.h"
+
