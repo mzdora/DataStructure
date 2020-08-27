@@ -1,5 +1,9 @@
 package com.mzdora;
 
+interface Merger<E> {
+    E merge(E a,E b);
+}
+
 public class SegmentTree<E> {
     private E[] data;
     private E[] tree;
@@ -64,6 +68,28 @@ public class SegmentTree<E> {
         E leftResult = query(leftTreeIndex,l,mid,queryL,mid);
         E rightResult = query(rightTreeIndex,mid+1,r,mid+1,queryR);
         return merger.merge(leftResult, rightResult);
+    }
+
+    public void set(int index,E e){
+        if(index<0||index>=data.length)
+            throw new IllegalArgumentException("index is illegal");
+        data[index] = e;
+        set(0,0, data.length-1, index, e);
+    }
+
+    private void set(int treeIndex,int l,int r,int index,E e){
+        if(l == r){
+            tree[treeIndex] = e;
+            return;
+        }
+        int mid = l+(r-l)/2;
+        int leftIndex = leftChild(treeIndex);
+        int rightIndex = rightChild(treeIndex);
+        if(index >= mid + 1)
+            set(rightIndex,mid+1,r,index,e);
+        else
+            set(leftIndex,l,mid,index,e);
+        tree[treeIndex] = merger.merge(tree[leftIndex],tree[rightIndex]);
     }
 
     @Override
